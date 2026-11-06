@@ -2,7 +2,7 @@
   "name": "NOW 마음챙김",
   "short_name": "NOW 마음챙김",
   "description": "지금이 기적이다",
-  "start_url": "./NOW_Firebase_Backup.html",
+  "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "background_color": "#f6f8f4",
