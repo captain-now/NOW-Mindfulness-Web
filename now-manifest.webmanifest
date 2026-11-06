@@ -1,0 +1,24 @@
+{
+  "name": "NOW 마음챙김",
+  "short_name": "NOW 마음챙김",
+  "description": "지금이 기적이다",
+  "start_url": "./NOW_Firebase_Backup.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f6f8f4",
+  "theme_color": "#286c50",
+  "icons": [
+    {
+      "src": "now-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "now-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
