@@ -545,6 +545,7 @@ window.addEventListener('pagehide',()=>{if(dirty)flush();});
 #now-file-backup-advanced{order:1;width:100%;box-sizing:border-box;border-top:1px solid #d5e4d9;padding-top:12px}
 #now-file-backup-advanced summary{cursor:pointer;color:#286c50;font-weight:700;padding:12px 0}
 #now-file-backup-advanced .advanced-inner{padding:8px 0}
+#journalPrivacy, #journal .journal-privacy, #journal .journal-notice {display:none!important;}
 </style>
 <script id="now-hwadu-audio-status">(function(){function init(){var a=document.getElementById('meditateMedia'),status=document.getElementById('hwaduAudioStatus');if(!a||!status)return;function say(t){status.textContent=t}a.addEventListener('canplay',function(){say('음성 준비 완료 · ▶ 재생 가능')});a.addEventListener('playing',function(){say('화두 음성 재생 중')});a.addEventListener('pause',function(){if(a.currentTime>0&&!a.ended)say('화두 음성 일시정지')});a.addEventListener('error',function(){say('음성파일을 불러오지 못했습니다. 아래에서 now_hwadu.m4a 파일을 선택하거나 GitHub 파일 경로를 확인해 주세요.')});if(a.readyState>=2)say('음성 준비 완료 · ▶ 재생 가능')}if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init()})();</script></body></html>
 <!-- V32 Android native JSON export via MediaStore Downloads. -->
