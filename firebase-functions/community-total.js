@@ -12,7 +12,7 @@ exports.rebuildNowCommunityTotal=onSchedule(
   const db=getFirestore();
   let total=0,accounts=0,invalid=0,last=null;
   do{
-   let q=db.collectionGroup("backups").where(FieldPath.documentId(),"==","latest").orderBy(FieldPath.documentId()).limit(400);
+   let q=db.collectionGroup("backups").orderBy(FieldPath.documentId()).limit(400);
    // Collection-group queries on document IDs can require an index.
    if(last)q=q.startAfter(last);
    const snap=await q.get();
