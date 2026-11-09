@@ -5,7 +5,7 @@
  */
 const {onSchedule}=require("firebase-functions/v2/scheduler");
 const {initializeApp}=require("firebase-admin/app");
-const {getFirestore,FieldValue}=require("firebase-admin/firestore");
+const {getFirestore,FieldValue,FieldPath}=require("firebase-admin/firestore");
 initializeApp();
 exports.rebuildNowCommunityTotals=onSchedule(
  {schedule:"every 60 minutes",timeZone:"Asia/Seoul",region:"asia-northeast3",memory:"512MiB",timeoutSeconds:540},
@@ -14,7 +14,7 @@ exports.rebuildNowCommunityTotals=onSchedule(
   let cursor=null, lifetime=0, members=0, today=0, scanned=0;
   const date=new Date(Date.now()+9*3600000).toISOString().slice(0,10);
   do{
-   let query=db.collectionGroup("backups").where("__name__",">=","").limit(250);
+   let query=db.collectionGroup("backups").orderBy(FieldPath.documentId()).limit(250);
    // A collectionGroup query would also include unrelated backups: filter by path below.
    if(cursor)query=query.startAfter(cursor);
    const page=await query.get();
