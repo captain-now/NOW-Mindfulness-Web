@@ -506,22 +506,44 @@ onAuthStateChanged(auth,user=>{
 <script id="now-cloud-backup-module" type="module">
 import {getApps,getApp,initializeApp} from 'https://www.gstatic.com/firebasejs/13.2.0/firebase-app.js';
 import {getAuth,onAuthStateChanged} from 'https://www.gstatic.com/firebasejs/13.2.0/firebase-auth.js';
-import {getFirestore,doc,getDoc,setDoc} from 'https://www.gstatic.com/firebasejs/13.2.0/firebase-firestore.js';
+import {getFirestore,doc,getDoc,onSnapshot,setDoc} from 'https://www.gstatic.com/firebasejs/13.2.0/firebase-firestore.js';
 const app=getApps().length?getApp():initializeApp({apiKey:'AIzaSyBMB0AONk4zHWyH9Vg5eD6a1hEPRQOUpr0',authDomain:'now-mindfulness.firebaseapp.com',projectId:'now-mindfulness',appId:'1:627192019817:web:54229693913a5de62e9bf8'});
 const auth=getAuth(app),store=getFirestore(app),mem=window.nowRecordStore;
 const status=document.getElementById('now-cloud-status');
 const communityTotal=document.getElementById('now-community-total');
 const communityStatus=document.getElementById('now-community-status');
-async function loadCommunityTotal(){
- try{
-  const snap=await getDoc(doc(store,'publicStats','community'));
-  const d=snap.exists()?snap.data():null;
-  if(!d||!Number.isSafeInteger(d.totalEarned)||d.totalEarned<0){communityTotal.textContent='집계 준비 중';return;}
-  communityTotal.textContent=new Intl.NumberFormat('ko-KR').format(d.totalEarned)+' NOW';
-  communityStatus.textContent='전체 회원 누적 적립 · 마지막 집계: '+(typeof d.updatedAt==='string'?d.updatedAt.slice(0,16).replace('T',' ')+' UTC':'시간 미확인');
- }catch(e){communityTotal.textContent='집계 준비 중';communityStatus.textContent='전체 집계 서비스 연결 대기 중';}
+const communityCopy={
+ ko:{pending:'집계 준비 중',privacy:'전체 합계만 표시됩니다.',unavailable:'전체 합계를 불러올 수 없습니다.'},
+ en:{pending:'Preparing community totals',privacy:'Only the combined total is shown.',unavailable:'Could not load the community total.'},
+ zh:{pending:'正在准备统计',privacy:'仅显示总计。',unavailable:'无法加载社区总计。'},
+ ja:{pending:'集計を準備中',privacy:'合計のみ表示します。',unavailable:'全会員の合計を読み込めません。'}
+};
+const languageSelect=document.getElementById('language');
+let communityLifetime=null,communityLoadFailed=false,stopCommunityListener;
+function renderCommunityTotal(){
+ const language=languageSelect.value;
+ const copy=communityCopy[language]||communityCopy.ko;
+ communityTotal.textContent=communityLifetime===null
+  ? (communityLoadFailed?'—':copy.pending)
+  : new Intl.NumberFormat(language).format(communityLifetime)+' NOW';
+ communityStatus.textContent=communityLoadFailed?copy.unavailable:copy.privacy;
 }
-loadCommunityTotal();
+function watchCommunityTotal(){
+ stopCommunityListener?.();
+ communityLoadFailed=false;
+ renderCommunityTotal();
+ stopCommunityListener=onSnapshot(doc(store,'publicStats','nowCommunity'),snapshot=>{
+  const total=snapshot.data()?.lifetimeNow;
+  communityLifetime=Number.isSafeInteger(total)&&total>=0?total:null;
+  renderCommunityTotal();
+ },()=>{
+  communityLoadFailed=true;
+  renderCommunityTotal();
+ });
+}
+languageSelect.addEventListener('change',renderCommunityTotal);
+document.getElementById('now-login-lang')?.addEventListener('change',renderCommunityTotal);
+communityTotal.setAttribute('aria-live','polite');
 
 let current=null,loading=false,dirty=false,writing=false,serial=0,saveTimer=null;
 const lock=document.createElement('div');lock.id='now-firebase-lock';
@@ -543,6 +565,7 @@ async function flush(){
 }
 window.addEventListener('now-record-change',()=>{if(!current||loading)return;dirty=true;serial++;status.textContent='☁️ 변경 사항 저장 대기 중…';clearTimeout(saveTimer);saveTimer=setTimeout(flush,650);});
 onAuthStateChanged(auth,async user=>{
+ watchCommunityTotal();
  clearTimeout(saveTimer);current=user;loading=true;dirty=false;mem.lock();lock.style.display='flex';
  if(!user){loading=false;status.textContent='🔐 기록 저장과 불러오기는 구글 로그인 후 이용할 수 있습니다.';unlock();return;}
  message('☁️ Firebase 기록을 불러오는 중…');
