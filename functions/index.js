@@ -28,7 +28,7 @@ exports.rebuildNowCommunityTotals=onSchedule(
     for(const e of parsed.events){
      if(!e||!(/^(chant|meditate|d[0-9])$/.test(e.id))||!/^\d{4}-\d{2}-\d{2}$/.test(e.date))continue;
      if(!Number.isFinite(e.amount))continue;
-     if(e.id==="chant"||e.id==="meditate"){if(e.amount!==2&&e.amount!==5)continue}
+     if(e.id==="chant"||e.id==="meditate"){if(![2,5,10].includes(e.amount))continue}
      else if(e.amount!==1)continue;
      memberTotal+=e.amount;
     }

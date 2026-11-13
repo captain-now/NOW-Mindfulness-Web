@@ -28,7 +28,7 @@ exports.rebuildNowCommunityTotal=onSchedule(
      for(const e of parsed.events){
       if(!e||!["chant","meditate",...Array.from({length:10},(_,i)=>"d"+i)].includes(e.id)
        ||typeof e.date!=="string"||!/^\d{4}-\d{2}-\d{2}$/.test(e.date)
-       ||!Number.isInteger(e.amount)||!((e.id==="chant"||e.id==="meditate")?[2,5].includes(e.amount):e.amount===1))
+       ||!Number.isInteger(e.amount)||!((e.id==="chant"||e.id==="meditate")?[2,5,10].includes(e.amount):e.amount===1))
        throw Error("Invalid event");
       subtotal+=e.amount;
      }
