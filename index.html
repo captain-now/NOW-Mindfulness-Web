@@ -597,5 +597,15 @@ window.addEventListener('pagehide',()=>{if(dirty)flush();});
 #daily #journalHeading, #daily #journalHint, #daily #journalEntries { display: none !important; }
 </style>
 <script src="./now-language-completion.js?v=3"></script>
+<script>
+(function () {
+  function openPracticeFromLink() {
+    if (window.location.hash === '#chant') show('chant');
+    if (window.location.hash === '#meditate') show('meditate');
+  }
+  openPracticeFromLink();
+  window.addEventListener('hashchange', openPracticeFromLink);
+})();
+</script>
 </body></html>
 <!-- V32 Android native JSON export via MediaStore Downloads. -->
