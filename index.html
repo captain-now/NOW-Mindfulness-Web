@@ -790,5 +790,39 @@ window.addEventListener('pagehide',()=>{if(dirty)flush();});
   window.addEventListener('hashchange', openPracticeFromLink);
 })();
 </script>
+
+<!-- NOW Daeungjeon Shakyamuni chant audio bridge -->
+<script>
+(function(){
+  const chantUrl = './audio/' + encodeURIComponent('석가모니불정근.m4a');
+  const chantAudio = new Audio(chantUrl);
+  chantAudio.preload = 'none';
+  chantAudio.loop = true;
+  const originalLabels = new WeakMap();
+  function isChantButton(el){
+    if(!el || !el.matches || !el.matches('button,[role="button"]')) return false;
+    const t = (el.textContent || '').replace(/\s+/g,' ').trim();
+    return /석가모니불\s*소리\s*(켜기|끄기)/.test(t);
+  }
+  document.addEventListener('click',function(e){
+    const button = e.target.closest && e.target.closest('button,[role="button"]');
+    if(!isChantButton(button)) return;
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    if(chantAudio.paused){
+      document.querySelectorAll('audio,video').forEach(function(media){if(media !== chantAudio) media.pause();});
+      chantAudio.play().then(function(){
+        if(!originalLabels.has(button)) originalLabels.set(button,button.textContent);
+        button.textContent = '석가모니불 소리 끄기';
+        button.setAttribute('aria-pressed','true');
+      }).catch(function(){alert('석가모니불 정근 음성을 재생할 수 없습니다.');});
+    }else{
+      chantAudio.pause();
+      button.textContent = '석가모니불 소리 켜기';
+      button.setAttribute('aria-pressed','false');
+    }
+  },true);
+})();
+</script>
 </body></html>
 <!-- V32 Android native JSON export via MediaStore Downloads. -->
